@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StoryListItem from '$lib/story-list-item/story-list-item.svelte';
+	import StoryListItem from '$lib/hn-item/hn-item.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

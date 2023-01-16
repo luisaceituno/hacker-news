@@ -1,8 +1,17 @@
 export interface HackerNewsItem {
-    id?: string,
-    title?: string,
-    type?: "story" | "comment",
+    id?: number,
+    deleted?: boolean,
+    type?: "job" | "story" | "comment" | "poll" | "pollopt",
+    by?: string,
+    time?: number,
     text?: string,
-    kids?: string[],
+    dead?: boolean,
+    parent?: number,
+    poll?: number,
+    kids?: number[]
     url?: string,
+    score?: number
+    title?: string,
+    parts?: number[]
+    descendants?: number[]
 }
