@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
+	import Loading from '$lib/loading/loading.svelte';
 
 	export let data: PageData;
 
@@ -15,3 +16,27 @@
 	<StoryListItem id={item} />
 {/each}
 <button on:click={() => page++}>More</button>
+
+<style>
+	h1 {
+		line-height: 1em;
+		padding: 0 1rem 1rem;
+		border-bottom: 0.25rem solid rgb(160 200 255);
+	}
+	button {
+		width: 100%;
+		padding: 1rem;
+		background: rgb(160 200 255);
+		font-family: 'Courier New', Courier, monospace;
+		font-weight: bold;
+		border: none;
+		cursor: pointer;
+		border-radius: 0.25rem;
+		box-shadow: 0 0.25rem 0 rgb(86, 140, 211);
+		transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+	}
+	button:hover {
+		transform: translateY(-0.25rem);
+		box-shadow: 0 0.5rem 0 rgb(86, 140, 211);
+	}
+</style>

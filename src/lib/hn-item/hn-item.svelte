@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { HackerNewsItem } from '$lib/types/hacker-news-item';
+	import Loading from '$lib/loading/loading.svelte';
 	import { getItem, maxScore } from './item-store';
 	import dayjs from 'dayjs';
 
@@ -17,9 +18,9 @@
 <div>
 	<div class="item">
 		{#await itemPromise}
-			<div class="title">[loading...]</div>
+			<div class="loading"><Loading /></div>
 		{:then item}
-			<div class="score" style="background-color: rgb(255 160 160 / {opacity}">
+			<div class="score" style="background-color: rgb(160 200 255 / {opacity})">
 				{item.score}
 			</div>
 			<div class="body">
@@ -38,6 +39,9 @@
 </div>
 
 <style>
+	.loading {
+		padding: 1rem;
+	}
 	.item {
 		display: flex;
 		flex-direction: row;
@@ -48,9 +52,9 @@
 	.score {
 		font-family: 'Courier New', Courier, monospace;
 		width: 3rem;
+		flex-shrink: 0;
 		text-align: right;
 		font-weight: bold;
-		background-color: rgb(crimson);
 		padding: 0.5rem;
 	}
 	.body {
