@@ -6,9 +6,9 @@ export type HackerNewsItemIndex = { [id: number]: HackerNewsItem };
 export const items: HackerNewsItemIndex = {};
 export const maxScore = writable(0);
 
-export async function getItem(id: number): Promise<HackerNewsItem> {
+export async function getItem(id: number, svelteFetch: typeof fetch = fetch): Promise<HackerNewsItem> {
     if (!items[id]) {
-        const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+        const response = await svelteFetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
         const item = await response.json()
         items[id] = item;
         updateMaxScore();

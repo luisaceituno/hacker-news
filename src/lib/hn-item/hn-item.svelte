@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { HackerNewsItem } from '$lib/types/hacker-news-item';
 	import Loading from '$lib/loading/loading.svelte';
-	import { getItem, maxScore } from './item-store';
-	import dayjs from 'dayjs';
+	import { getItem, maxScore } from '$lib/stores/item-store';
+	import { timeAgo } from '$lib/times/times';
 
 	export let id: number;
 
@@ -11,8 +11,8 @@
 
 	itemPromise.then((i) => (item = i));
 	$: opacity = (item?.score ?? 0) / $maxScore;
-	$: commentsUrl = `https://news.ycombinator.com/item?id=${id}`;
-	$: timeAgo = dayjs(new Date(1000 * (item?.time ?? 0))).fromNow();
+	$: commentsUrl = `comments/${id}`;
+	$: timestamp = timeAgo(item?.time);
 </script>
 
 <div>
@@ -26,10 +26,10 @@
 			<div class="body">
 				<a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
 				<div class="infos">
-					<a href={commentsUrl} target="_blank" rel="noreferrer">
+					<a href={commentsUrl}>
 						{item.descendants ?? 0} Comments
 					</a>
-					<span>{timeAgo}</span>
+					<span>{timestamp}</span>
 				</div>
 			</div>
 		{:catch error}

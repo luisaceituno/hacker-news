@@ -1,21 +1,16 @@
 <script lang="ts">
 	import StoryListItem from '$lib/hn-item/hn-item.svelte';
 	import type { PageData } from './$types';
-	import dayjs from 'dayjs';
-	import relativeTime from 'dayjs/plugin/relativeTime';
-	import Loading from '$lib/loading/loading.svelte';
+	import page from '$lib/stores/pagination-store';
 
 	export let data: PageData;
-
-	dayjs.extend(relativeTime);
-	let page = 1;
 </script>
 
 <h1>Top Stories</h1>
-{#each data.top.slice(0, page * 20) as item}
+{#each data.top.slice(0, $page * 20) as item}
 	<StoryListItem id={item} />
 {/each}
-<button on:click={() => page++}>More</button>
+<button on:click={() => page.increase()}>More</button>
 
 <style>
 	h1 {
