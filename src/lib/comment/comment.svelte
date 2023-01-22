@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getItem } from '$lib/stores/item-store';
 	import Loading from '$lib/loading/loading.svelte';
-	import type { HackerNewsItem } from '$lib/types/hacker-news-item';
 	import { timeAgo } from '$lib/times/times';
 
 	export let id: number;
@@ -9,28 +8,32 @@
 
 	const colors = ['rgb(160 200 255)'];
 
-	let open = depth < 1;
-	let comment: HackerNewsItem;
+	let open = true;
+	let showChildren = false;
+	let comment = getItem(id);
 
-	$: loading = comment == null;
-	$: timestamp = timeAgo(comment?.time);
-
-	getItem(id).then((c) => (comment = c));
+	$: loading = $comment == null;
+	$: timestamp = timeAgo($comment?.time);
+	$: childCount = $comment?.kids?.length ?? 0;
 </script>
 
 <div class="comment" style="--color: {colors[depth % colors.length]};">
 	{#if loading}
 		<Loading />
-	{:else}
+	{:else if !$comment.deleted}
 		<button class="title-bar" on:click={() => (open = !open)}>
-			<div class="title">{comment.by}</div>
-			<div class="kids">({timestamp}) [{comment.kids?.length ?? 0}]</div>
+			<div class="title">{$comment.by}</div>
+			<div class="kids">({timestamp}) [{childCount}]</div>
 		</button>
 		{#if open}
-			<div class="body">{@html comment.text}</div>
-			{#each comment.kids ?? [] as kid}
-				<svelte:self id={kid} depth={depth + 1} />
-			{/each}
+			<div class="body">{@html $comment.text}</div>
+			{#if showChildren || childCount == 0}
+				{#each $comment.kids ?? [] as kid}
+					<svelte:self id={kid} depth={depth + 1} />
+				{/each}
+			{:else}
+				<button on:click={() => (showChildren = true)} class="more">{childCount} Children</button>
+			{/if}
 		{/if}
 	{/if}
 </div>
@@ -53,5 +56,12 @@
 	}
 	.body {
 		padding: 0.5rem;
+	}
+	.more {
+		border: none;
+		width: 100%;
+		padding: 0.25rem;
+		background: aliceblue;
+		cursor: pointer;
 	}
 </style>

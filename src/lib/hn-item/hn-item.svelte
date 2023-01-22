@@ -1,40 +1,35 @@
 <script lang="ts">
-	import type { HackerNewsItem } from '$lib/types/hacker-news-item';
 	import Loading from '$lib/loading/loading.svelte';
 	import { getItem, maxScore } from '$lib/stores/item-store';
 	import { timeAgo } from '$lib/times/times';
 
 	export let id: number;
 
-	const itemPromise = getItem(id);
-	let item: HackerNewsItem;
+	let item = getItem(id);
 
-	itemPromise.then((i) => (item = i));
-	$: opacity = (item?.score ?? 0) / $maxScore;
+	$: opacity = ($item?.score ?? 0) / $maxScore;
 	$: commentsUrl = `comments/${id}`;
-	$: timestamp = timeAgo(item?.time);
+	$: timestamp = timeAgo($item?.time);
 </script>
 
 <div>
 	<div class="item">
-		{#await itemPromise}
+		{#if !$item}
 			<div class="loading"><Loading /></div>
-		{:then item}
+		{:else}
 			<div class="score" style="background-color: rgb(160 200 255 / {opacity})">
-				{item.score}
+				{$item.score}
 			</div>
 			<div class="body">
-				<a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+				<a href={$item.url} target="_blank" rel="noreferrer">{$item.title}</a>
 				<div class="infos">
 					<a href={commentsUrl}>
-						{item.descendants ?? 0} Comments
+						{$item.descendants ?? 0} Comments
 					</a>
 					<span>{timestamp}</span>
 				</div>
 			</div>
-		{:catch error}
-			<div>error: {error}</div>
-		{/await}
+		{/if}
 	</div>
 </div>
 

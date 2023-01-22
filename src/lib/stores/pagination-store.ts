@@ -1,8 +1,14 @@
 import { writable } from "svelte/store";
 
-const { subscribe, update } = writable(1);
+const pageStore = writable(1);
+const mainScrollPositionStore = writable(0);
 
-export default {
-    subscribe,
-    increase: () => update(c => c + 1)
+export const page = {
+    subscribe: pageStore.subscribe,
+    increase: () => pageStore.update(c => c + 1)
+}
+
+export const mainScrollPosition = {
+    subscribe: mainScrollPositionStore.subscribe,
+    update: (pos: number) => mainScrollPositionStore.set(pos)
 }

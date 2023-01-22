@@ -1,23 +1,18 @@
 import type { HackerNewsItem } from '$lib/types/hacker-news-item';
-import { writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 
-export type HackerNewsItemIndex = { [id: number]: HackerNewsItem };
+export const items = writable<{ [id: number]: HackerNewsItem }>({});
+export const maxScore = derived(items, items => Math.max(...Object.values(items).map(i => i.score ?? 0)));
 
-export const items: HackerNewsItemIndex = {};
-export const maxScore = writable(0);
-
-export async function getItem(id: number, svelteFetch: typeof fetch = fetch): Promise<HackerNewsItem> {
-    if (!items[id]) {
-        const response = await svelteFetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
-        const item = await response.json()
-        items[id] = item;
-        updateMaxScore();
-    }
-    return items[id];
+export function getItem(id: number, svelteFetch: typeof fetch = fetch): Readable<HackerNewsItem> {
+    items.subscribe(idx => {
+        if (!idx[id]) fetchItem(id, svelteFetch);
+    })();
+    return derived(items, idx => idx[id]);
 }
 
-function updateMaxScore() {
-    const scores = Object.values(items).map(it => it.score ?? 0);
-    const max = Math.max(...scores);
-    maxScore.set(max);
+async function fetchItem(id: number, svelteFetch: typeof fetch) {
+    const response = await svelteFetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+    const item = await response.json();
+    items.update(items => ({ ...items, [id]: item }));
 }

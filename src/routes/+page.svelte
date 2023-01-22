@@ -1,9 +1,19 @@
 <script lang="ts">
 	import StoryListItem from '$lib/hn-item/hn-item.svelte';
 	import type { PageData } from './$types';
-	import page from '$lib/stores/pagination-store';
+	import { page, mainScrollPosition } from '$lib/stores/pagination-store';
+	import { onDestroy, onMount } from 'svelte';
 
 	export let data: PageData;
+
+	let yPos = 0;
+
+	onMount(() => {
+		setTimeout(() => (yPos = $mainScrollPosition));
+	});
+	onDestroy(() => {
+		mainScrollPosition.update(yPos);
+	});
 </script>
 
 <h1>Top Stories</h1>
@@ -11,6 +21,8 @@
 	<StoryListItem id={item} />
 {/each}
 <button on:click={() => page.increase()}>More</button>
+
+<svelte:window bind:scrollY={yPos} />
 
 <style>
 	h1 {
